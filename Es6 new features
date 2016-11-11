@@ -41,3 +41,37 @@ arrow function
            console.log(this.type + ' says ' + say)
        }.bind(this), 1000)
  bind改变this的指向
+ 
+ **********************************       {...arr}         **********************************
+ 点语法  funcion she(...arr){
+            console.log(...arr)
+        }
+        var she = ['1','2','3']//['1','2','3']
+    
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
