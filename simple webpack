@@ -1,0 +1,48 @@
+一、使用流程：
+		1.npm init 生成package.json的文件.在package.json文件里面加载项目所需要的依赖文件。
+		
+		2.npm install --save-dev 和 --save的区别   前面的会加入到devdependencies里面，是生产环境中所需要的依赖. --save 是发布环节中所需要的依赖.
+
+previvew:
+
+var webpack = require('webpack');	//引入所需要的webpack
+
+module.exports = {
+          entry:  __dirname + "/app/main.js",  //项目的入口文件
+          output: {
+            path: __dirname + "/public",  //项目打包出的文件
+            filename: "bundle.js"
+        },
+        module:{
+            loaders:[						//用于处理管理js的文件依赖
+                    {
+                        test:/\.js$/,
+                        exclude:/node_modules/,
+                        loader:'babel',
+                        query:{
+                            presets:['es2015']
+                        }
+                }
+            ]
+        },
+        resolve:{							//引入中可以忽略后缀的配置
+            extensions:['','.js','.jsx']
+        },
+        plugins:[							//打包时候用到的插件
+            new webpack.optimize.UglifyJsPlugin({  //压缩js的文件
+                compress: {
+                warnings: false
+            }
+            }),
+            new webpack.optimize.OccurenceOrderPlugin()
+        ],
+
+        devServer:{							//npm install --save-dev webpack-dev-server
+                contentBase: "./public",	
+                colors: true,
+                historyApiFallback: true,
+                inline: true
+              }
+
+}
+	
