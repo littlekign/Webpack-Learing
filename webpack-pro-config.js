@@ -46,7 +46,11 @@ module.exports = {
       // 压缩代码
       compressor: {
         warnings: false
+      },
+      output: {
+        comments: false,  // remove all comments
       }
+
     }),
 
     new webpack.DefinePlugin({
