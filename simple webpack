@@ -1,10 +1,10 @@
 一、使用流程：
-		1.npm init 生成package.json的文件.在package.json文件里面加载项目所需要的依赖文件。
+		1.npm init 生成package.json的文件.在package.json文件里面加载项目所需要的依赖文件。package.json里面必须要有的name,version两个参数别的可以不用。否者npm就不能正常的运行。
 		
 		2.npm install --save-dev 和 --save的区别   前面的会加入到devdependencies里面，是生产环境中所需要的依赖. --save 是发布环节中所需要的依赖.
 
 previvew:
-
+es5 语法：
 var webpack = require('webpack');	//引入所需要的webpack
 
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
         },
         plugins:[							//打包时候用到的插件
             new webpack.optimize.UglifyJsPlugin({  //压缩js的文件
-                compress: {
+                compress: {						//打包时候用于忽略掉文件的报错
                 warnings: false
             }
             }),
@@ -43,6 +43,5 @@ module.exports = {
                 historyApiFallback: true,
                 inline: true
               }
-
 }
 	
