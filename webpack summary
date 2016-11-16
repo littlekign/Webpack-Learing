@@ -33,3 +33,16 @@ module.exports = {
   ]
 }
 依赖多个文件的时候，提取项目文件中的公共的依赖的文件--init.js
+
+提取webpack里面的第三方的库文件，把库文件打包到vendor.js里面去
+{
+  entry: {
+   bundle: 'app'
+    vendor: ['react']
+  }
+
+  plugins: {
+    new webpack.optimize.CommonsChunkPlugin('vendor',  'vendor.js')
+  }
+}
+
