@@ -4,6 +4,172 @@ http://www.jianshu.com/p/503895d3ffc9
 
 http://blog.csdn.net/pepping798/article/details/51703270
 
+
+/*
+* @Author: anchen
+* @Date:   2016-11-16 16:12:43
+
+*/
+
+
+//entry:打包的入口文件，一个字符串或者一个对象
+//output:配置打包的结果，一个对象
+//fileName：定义输出文件名，一个字符串
+//path：定义输出文件路径，一个字符串
+
+
+//(1)当entry是一个字符串时，这个字符串表示需要打包的模块的路径,
+module.exports={        //单入口文件
+    entry:'.mian.js',
+    ouput:{
+        filename:'bundle.js'
+    }
+}
+/********************************/
+/*(2)a.是数组时,当需要将多个模块打包成一个模块，可以使用这个方式。如果这些模块之间不存在依赖，数组中
+          值的顺序没有要求，如果存在依赖，则要将依赖性最高的模块放在最后面
+*/
+module.exports={        //多入口文件
+    entry:[
+        '.main1.js',
+        'main2.js',
+        vendor:[      //在vendor里面chunk走引入的js
+          'react',
+          'react-dom'
+        ]
+    ]
+    ouput:{
+        filename:'[name].js'
+    }
+}
+//b.是键值对形式的对象是，当需要分别打包成多个模块时，可以使用这种方式，
+    entry:{
+    　　module1:"./app/one.js",
+    　　module2:["./app/two.js","./app/three.js"]
+    }
+
+/*二、  (1)   output是一个对象
+
+            (2)   output.filename:指定输出文件名，一个字符串。当输出一个文件，output.filename为一个确定的字符串
+*/
+output:{
+    filename:'main.js'
+}
+//当输出多个文件，output.filename不能为一个确定的字符串。为了让每个文件有一个唯一的名字，需要用到下面的变量
+    output:{
+        path:'./dist',
+        filename:'[name].js'
+    }
+
+
+//loader/loaders :字符串或者数组，处理匹配到的文件。如果只需要用到一个模块加载器则使用　
+//loader：string，如果要使用多个模块加载器，则使用loaders：array
+
+
+//module:定义对模块的处理逻辑，一个对象
+module:{
+    loaders:[
+            {
+                test:/\.js[x]?$/,
+                exclude:/node_modules/,  //字符串或者数组，指排除的文件夹
+                loader:'babel-loader?presets[]=es2015&presets[]=react'
+        },
+            {
+                test: /\.(otf|eot|svg|ttf|woff|woff2).*$/,
+                loader: 'url'           //url的地址
+      },
+             {
+                test: /\.(gif|jpe?g|png|ico)$/,
+                loader: 'url'           //url的地址
+      }
+    ]
+}
+
+//resolve:影响对模块的解析，一个对象
+//extensions：自动补全识别后缀，是一个数组
+//，手动配置时默认值会被覆盖
+    resolve:{
+        extensions:['','js','jsx'],
+
+    // 路径别名,
+    alias:{
+      app:path.resolve('./src/js'),
+      // 以前你可能这样引用 import { Nav } from '../../components'
+      // 现在你可以这样引用 import { Nav } from 'app/components'
+
+      style:path.resolve('./src/styles')
+      // 以前你可能这样引用 @import "../../../styles/mixins.scss"
+      // 现在你可以这样引用 @import "style/mixins.scss"
+    }
+    }
+//resolve不是必须值，不配置时用的默认值第一个值一定是空值不然require就找不到
+['', '.webpack.js', '.web.js', '.js']
+
+//plugins:定义插件，一个数组
+    plugins:[
+        new webpack.optimize.OccurrenceOrderPlugin(),
+    // webapck 会给编译好的代码片段一个id用来区分
+    // 而这个插件会让webpack在id分配上优化并保持一致性。
+    // 具体是的优化是：webpack就能够比对id的使用频率和分布来得出最短的id分配给使用频率高的模块
+    // new webpack.optimize.UglifyJsPlugin({
+    // 压缩代码
+      compressor: {
+        warnings: false
+      }
+    }),
+
+    //  很多库的内部，有process.NODE_ENV的判断语句，改为production。最直观的就是没有所有的debug相关的东西，体积会减少很多
+  new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      __DEV__: false
+    }),
+
+
+    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js' ),
+    // 'vendor' 把依赖库(比如react react-router, redux)全部打包到 vendor.js中
+    // 'vendor.js' 把自己写的相关js打包到bundle.js中
+    // 一般依赖库放到前面，所以vendor放第一个
+
+    new HtmlWebpackPlugin({
+      template:'',
+      // html模板的路径
+
+      title: '产品模式',
+
+      filename:'index.html',
+      // 文件名以及文件将要存放的位置
+
+      favicon:'./favicon.ico',
+      // favicon路径
+
+      inject:'body',
+      // js插入的位置，true/'head'  false/'body'
+
+      chunks: ['vendor', 'index' ],
+      // 指定引入的chunk，根据entry的key配置，不配置就会引入所有页面的资源
+
+      hash:true,
+      // 这样每次客户端页面就会根据这个hash来判断页面是否有必要刷新
+      // 在项目后续过程中，经常需要做些改动更新什么的，一但有改动，客户端页面就会自动更新！
+
+      minify:{
+      // 压缩HTML文件
+        removeComments:true,
+        // 移除HTML中的注释
+
+        collapseWhitespace:true
+        // 删除空白符与换行符
+    ]
+
+
+//1.webpack-dev-server是一个轻量级的服务器，修改文件源码后，自动刷新页面将修改同步到页面上
+//使用命令webpack-dev-server --hot --inline完成自动刷新
+//默认的端口号是8080，如果需要8080端口被占用，就需要改端口，webpack-dev-server --port 3000
+
+
+
+
+
 webpack 的命令
 
 webpack – for building once for development  //生成项目的时候用的
