@@ -11,3 +11,25 @@ webpack -p – for building once for production (minification) //用于产品压
 webpack --watch – for continuous incremental //build 用于监视编译
 webpack -d – to include source maps           // 生成一个资源图
 webpack --colors – for making things pretty  //加颜色区别
+
+webpack多文件入口的时候在output的时候生成的文件名，要写成变量的形式filename:'[name].js'
+
+var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
+module.exports = {
+  entry: {
+    bundle1: './main1.jsx',
+    bundle2: './main2.jsx'
+  },
+  output: {
+    filename: '[name].js'
+  },
+  module: {
+    loaders:[
+      { test: /\.js[x]?$/, exclude: /node_modules/, loader: 'babel-loader?presets[]=es2015&presets[]=react' },
+    ]
+  },
+  plugins: [
+    new CommonsChunkPlugin('init.js')
+  ]
+}
+依赖多个文件的时候，提取项目文件中的公共的依赖的文件--init.js
